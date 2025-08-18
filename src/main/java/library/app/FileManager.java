@@ -1,7 +1,5 @@
 package library.app;
 
-import lombok.experimental.UtilityClass;
-
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -13,10 +11,9 @@ import java.util.Objects;
  *
  * @author gilson.junior.a1
  */
-@UtilityClass
 public class FileManager {
     // Atributos da classe
-    public final String FILE_PATH = Paths.get(new File("").getAbsolutePath(), "src", "main", "resources").toString();
+    public static final String FILE_PATH = Paths.get(new File("").getAbsolutePath(), "src", "main", "resources").toString();
 
     /**
      * Checa se um arquivo existe
@@ -24,7 +21,7 @@ public class FileManager {
      * @param file Objeto que representa o arquivo que deve existir
      * @return Verdadeiro se o arquivo existe, falso caso contrário
      */
-    public boolean fileExists(final File file) {
+    public static boolean fileExists(final File file) {
         return file.exists();
     }
 
@@ -35,7 +32,7 @@ public class FileManager {
      * @return Verdadeiro se o arquivo pôde ser criado, falso caso contrário
      * @throws IOException Caso o programa encontre problemas para interagir com o arquivo
      */
-    public boolean createFile(final File file) throws IOException {
+    public static boolean createFile(final File file) throws IOException {
         return file.createNewFile();
     }
 
@@ -45,7 +42,7 @@ public class FileManager {
      * @param file Objeto que representa o arquivo que deve ter o conteúdo lido e retornado
      * @return Uma lista de String que representa o conteúdo do arquivo
      */
-    public List<String> readFile(final File file) {
+    public static List<String> readFile(final File file) {
         List<String> fileContent = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()))) {
@@ -67,10 +64,15 @@ public class FileManager {
      * @param file        Objeto que representa o arquivo que deve ter o conteúdo lido e retornado
      * @param contentLine Linha que representa o conteúdo que deve ser escrito no arquivo
      */
-    public void writeLineToFile(final File file, final String contentLine) {
+    public static void writeLineToFile(final File file, final String contentLine) {
+        List<String> currrentContent = readFile(file);
+        currrentContent.add(contentLine);
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAbsolutePath()))) {
-            writer.write(contentLine);
-            writer.newLine();
+            for (String line : currrentContent) {
+                writer.write(line);
+                writer.newLine();
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
