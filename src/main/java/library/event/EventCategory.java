@@ -5,7 +5,7 @@ package library.event;
  *
  * @author Gilson Nunes Junior | 2025206104
  */
-public enum EventType {
+public enum EventCategory {
     /**
      * Acadêmicos / Escolares (ex.: Feira de Ciências, Sarau)
      */
@@ -23,7 +23,7 @@ public enum EventType {
      */
     E_SPORTS, //
     /**
-     * Esportivos (ex.: Jogo de Futebol, Voleiball)
+     * Esportivos (ex.: Jogo de Futebol, Voleibol)
      */
     SPORTS
 }

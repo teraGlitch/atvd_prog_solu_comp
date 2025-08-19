@@ -1,7 +1,6 @@
 package library.event;
 
 import library.app.FileManager;
-import lombok.experimental.UtilityClass;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,18 +12,17 @@ import java.util.Objects;
  *
  * @author gilson.junior.a1
  */
-@UtilityClass
 public class DataFileManager extends FileManager {
     // Atributos da classe
-    private final String DATA_FILENAME = Paths.get(FILE_PATH, "data", "events.data").toString();
-    private final String DEFAULT_FILE_CONTENT = "ID,DESCRIPTION,TYPE,ADDRESS,ATTENDEES";
+    public static final String DATA_FILENAME = Paths.get(FILE_PATH, "data", "events.data").toString();
+    private static final String DEFAULT_FILE_CONTENT = "ID,NAME,ADDRESS,CATEGORY,START_DATE,DESCRIPTION";
 
     /**
      * Cria e confere o conteúdo necessário para que o programa execute corretamente
      *
      * @throws IOException Caso o programa encontre problemas para interagir com o arquivo
      */
-    public void setUpOrCheckEventsFile() throws IOException {
+    public static void setUpOrCheckEventsFile() throws IOException {
         File dataFile = new File(DATA_FILENAME);
 
         if (!fileExists(dataFile)) {
@@ -37,15 +35,5 @@ public class DataFileManager extends FileManager {
 
         if (!Objects.equals(readFile(dataFile).get(0), DEFAULT_FILE_CONTENT))
             throw new RuntimeException("O arquivo de dados não possui o cabeçalho esperado");
-    }
-
-    /**
-     * Função principal
-     *
-     * @param args Argumentos para execução
-     * @throws IOException Caso o programa encontre problemas para interagir com algum arquivo
-     */
-    public static void main(String[] args) throws IOException {
-        setUpOrCheckEventsFile();
     }
 }

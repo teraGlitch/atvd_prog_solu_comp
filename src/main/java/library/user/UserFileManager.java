@@ -1,7 +1,6 @@
 package library.user;
 
 import library.app.FileManager;
-import lombok.experimental.UtilityClass;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,18 +12,17 @@ import java.util.Objects;
  *
  * @author gilson.junior.a1
  */
-@UtilityClass
 public class UserFileManager extends FileManager {
     // Atributos da classe
-    private final String USERS_FILENAME = Paths.get(FILE_PATH, "data", "users.data").toString();
-    private final String DEFAULT_FILE_CONTENT = "ID,NAME,GENDER,AGE,DOCUMENT";
+    public static final String USERS_FILENAME = Paths.get(FILE_PATH, "data", "users.data").toString();
+    private static final String DEFAULT_FILE_CONTENT = "ID,NAME,GENDER,AGE,DOCUMENT";
 
     /**
      * Cria e confere o conteúdo necessário para que o programa execute corretamente
      *
      * @throws IOException Caso o programa encontre problemas para interagir com o arquivo
      */
-    public void setUpOrCheckUsersFile() throws IOException {
+    public static void setUpOrCheckUsersFile() throws IOException {
         File dataFile = new File(USERS_FILENAME);
 
         if (!fileExists(dataFile)) {

@@ -77,4 +77,14 @@ public class FileManager {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Retorna o número de linhas que um arquivo possui, subtraído 1 (linha de cabeçalho)
+     *
+     * @param file Objeto que representa o arquivo que deve ter as linhas contadas
+     * @return Inteiro que representa o número de linhas que pode ser usado como id
+     */
+    public static int countLinesForIds(File file) {
+        return readFile(file).size() - 1;
+    }
 }
