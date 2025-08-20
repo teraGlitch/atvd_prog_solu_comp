@@ -15,7 +15,7 @@ import java.util.Objects;
 public class UserFileManager extends FileManager {
     // Atributos da classe
     public static final String USERS_FILENAME = Paths.get(FILE_PATH, "data", "users.data").toString();
-    private static final String DEFAULT_FILE_CONTENT = "ID,NAME,GENDER,AGE,DOCUMENT";
+    private static final String DEFAULT_FILE_CONTENT = "ID;NAME;GENDER;AGE;DOCUMENT;PASSWORD";
 
     /**
      * Cria e confere o conteúdo necessário para que o programa execute corretamente

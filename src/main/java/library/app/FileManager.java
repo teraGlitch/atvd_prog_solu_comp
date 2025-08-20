@@ -85,6 +85,6 @@ public class FileManager {
      * @return Inteiro que representa o número de linhas que pode ser usado como id
      */
     public static int countLinesForIds(File file) {
-        return readFile(file).size() - 1;
+        return readFile(file).size();
     }
 }
