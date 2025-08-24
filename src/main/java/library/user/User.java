@@ -12,8 +12,9 @@ import java.util.Objects;
  * @author gilson.junior.a1
  */
 public class User {
-    private final int USER_NAME_POSITION_IN_FILE = 1;
-    private final int USER_DOCUMENT_POSITION_IN_FILE = 4;
+    private static final int USER_NAME_POSITION_IN_FILE = 1;
+    private static final int USER_DOCUMENT_POSITION_IN_FILE = 4;
+    private static final int USER_PASSWORD_POSITION_IN_FILE = 5;
     private final File userFile;
     public int id;
     public String name;
@@ -44,6 +45,25 @@ public class User {
 
         PasswordHelper passwordHelper = new PasswordHelper("SHA-256", "UTF-8");
         this.password = passwordHelper.generateHash(password);
+    }
+
+    public static String getUserPassword(String userTryingToLogIn) throws IOException {
+        String password = "";
+        UserFileManager.setUpOrCheckUsersFile();
+
+        File userFile = new File(UserFileManager.USERS_FILENAME);
+        List<String> users = UserFileManager.readFile(userFile);
+
+        for (String user : users) {
+            String[] userData = user.split(";");
+            String userNameInFile = userData[USER_NAME_POSITION_IN_FILE];
+
+            if (Objects.equals(userTryingToLogIn, userNameInFile)) {
+                password = userData[USER_PASSWORD_POSITION_IN_FILE];
+            }
+        }
+
+        return password;
     }
 
     /* *********
@@ -120,7 +140,7 @@ public class User {
         boolean userDocumentExists = checkIfUserDataExists(this.getDocumentNumber(), USER_DOCUMENT_POSITION_IN_FILE);
 
         if (userNameExists || userDocumentExists) {
-            throw new RuntimeException("Dados já existentes na base de dados");
+            throw new RuntimeException("=== ERRO AO PROCESSAR OS DADOS INFORMADOS. TENTE NOVAMENTE ===");
         } else {
             UserFileManager.writeLineToFile(userFile, this.toString());
         }

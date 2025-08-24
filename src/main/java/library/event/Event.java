@@ -16,7 +16,7 @@ import java.util.List;
  * @author gilson.junior.a1
  */
 public class Event {
-    private static File eventStaticFile;
+    private static final File eventStaticFile = new File(DataFileManager.DATA_FILENAME);
     private final File eventFile;
     public int id;
     public String name;
@@ -41,7 +41,6 @@ public class Event {
     public Event(String name, String address, EventCategory category, LocalDateTime startDateAndTime, long durationInHours, String description) throws IOException {
         DataFileManager.setUpOrCheckEventsFile();
         this.eventFile = new File(DataFileManager.DATA_FILENAME);
-        eventStaticFile = new File(DataFileManager.DATA_FILENAME);
         this.id = DataFileManager.countLinesForIds(eventFile);
         this.name = name;
         this.address = address;
@@ -67,7 +66,6 @@ public class Event {
     public Event(int id, String name, String address, EventCategory category, LocalDateTime startDateAndTime, long durationInHours, String description) throws IOException {
         DataFileManager.setUpOrCheckEventsFile();
         this.eventFile = new File(DataFileManager.DATA_FILENAME);
-        eventStaticFile = new File(DataFileManager.DATA_FILENAME);
         this.id = id;
         this.name = name;
         this.address = address;
