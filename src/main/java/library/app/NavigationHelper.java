@@ -11,111 +11,197 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
 import java.util.Objects;
 
+import static library.app.OutputHelper.*;
+import static library.user.User.*;
+
+/**
+ * Descreve o comportamento ao navegar pelo menu
+ *
+ * @author gilson.junior.a1
+ */
 public class NavigationHelper extends Application {
+    /**
+     * Executa funções conforme opção digitada
+     *
+     * @param userInput Opção fornecida pelo usuário
+     * @throws IOException              Caso a aplicação encontre problemas para interagir com os arquivos
+     * @throws NoSuchAlgorithmException Caso a aplicação encontre problemas para criptografar senhas
+     */
     public static void selectOption(final int userInput) throws IOException, NoSuchAlgorithmException {
         if (userInput < 0 || userInput > 6) {
-            System.out.println("=== OPCAO INVALIDA. TENTE NOVAMENTE ===");
+            System.out.println(INVALID_OPTION_MESSAGE);
         } else {
             switch (userInput) {
-                case 0:
-                    System.out.println(OutputHelper.END_LINE);
-                    break;
                 case 1:
-                    register();
+                    registerUser();
                     break;
                 case 2:
                     login();
                     break;
-//                case 3:
-//                    break;
+                case 3:
+                    registerEvent();
+                    break;
                 case 4:
                     listEvents();
                     break;
                 case 5:
+                    applyToAnEvent();
                     break;
                 case 6:
                     logout();
                     break;
+                default:
+                    System.out.println(END_LINE);
+                    break;
             }
         }
     }
 
-    public static void register() throws IOException, NoSuchAlgorithmException {
-        String[] outputHelper = OutputHelper.REGISTER_STEPS;
+    /**
+     * Executa função de cadastrar novo usuário
+     *
+     * @throws IOException              Caso a aplicação encontre problemas para interagir com o arquivo de usuário
+     * @throws NoSuchAlgorithmException Caso a aplicação encontre problemas para criptografar senhas
+     */
+    public static void registerUser() throws IOException, NoSuchAlgorithmException {
         String[] userData = new String[UserFileManager.DEFAULT_FILE_CONTENT.split(";").length - 1];
 
-        System.out.print(outputHelper[0]); // Usuário
-        userData[0] = inputReader.nextLine();
-        System.out.print(outputHelper[1]); // Senha (1)
-        userData[4] = inputReader.nextLine();
-        System.out.print(outputHelper[2]); // Senha (2)
-        if (inputReader.nextLine().equals(userData[4])) {
-            System.out.print(outputHelper[3]); // Gênero
-            userData[1] = inputReader.nextLine();
-            System.out.print(outputHelper[4]); // Idade
-            userData[2] = inputReader.nextLine();
-            System.out.print(outputHelper[5]); // Documento
-            userData[3] = inputReader.nextLine();
+        try {
+            System.out.print(INPUT_USERNAME_MESSAGE);
+            userData[0] = inputReader.nextLine();
 
-            try {
+            if (Objects.equals(userData[0].trim(), "") || userData[0].contains(";")) {
+                throw new RuntimeException(INVALID_USERNAME_MESSAGE);
+            }
+
+            System.out.print(INPUT_USER_PASSWORD_MESSAGE);
+            userData[4] = inputReader.nextLine();
+            System.out.print(CONFIRM_USER_PASSWORD_MESSAGE);
+            if (inputReader.nextLine().equals(userData[4])) {
+                System.out.print(INPUT_USER_GENDER_MESSAGE);
+                userData[1] = inputReader.nextLine();
+
+                if (userData[1].trim().length() != 1 || !POSSIBLE_USER_GENDERS.contains(userData[1].toLowerCase(Locale.ROOT))) {
+                    throw new RuntimeException(INVALID_GENDER_MESSAGE);
+                }
+
+                System.out.print(INPUT_USER_AGE_MESSAGE);
+                userData[2] = inputReader.nextLine();
+
+                if (Integer.parseInt(userData[2]) < MIN_USER_AGE || Integer.parseInt(userData[2]) > MAX_USER_AGE) {
+                    throw new RuntimeException(INVALID_AGE_MESSAGE);
+                }
+
+                System.out.print(INPUT_USER_DOCUMENT_MESSAGE);
+                userData[3] = inputReader.nextLine();
+
+                if (Objects.equals(userData[3].trim(), "") || userData[3].contains(";")) {
+                    throw new RuntimeException(INVALID_DOCUMENT_MESSAGE);
+                }
+
                 User user = new User( //
                         userData[0], //
-                        userData[1].toCharArray()[0], //
+                        userData[1].toUpperCase(Locale.ROOT).toCharArray()[0], //
                         Integer.parseInt(userData[2]), //
                         userData[3], //
                         userData[4]);
                 user.registerUser();
-                System.out.println("=== USUARIO CADASTRADO COM SUCESSO ===");
-            } catch (RuntimeException e) {
-                System.out.println(e.getMessage().toUpperCase(Locale.ROOT));
+
+                System.out.println(user.describe());
+                System.out.println(USER_REGISTERED_MESSAGE);
+            } else {
+                throw new RuntimeException(INVALID_PASSWORD_MESSAGE);
             }
-        } else {
-            System.out.println("=== SENHAS NAO CONFEREM. TENTE NOVAMENTE ===");
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage().toUpperCase(Locale.ROOT));
         }
     }
 
+    /**
+     * Verifica se há um usuário logado e lança exceção caso não esteja
+     */
+    public static void userMustBeLogged() {
+        if (!isUserLogged) {
+            throw new RuntimeException(LOG_IN_TO_CONTINUE_MESSAGE);
+        }
+    }
+
+    /**
+     * Executa função de acessar a aplicação com credenciais de usuário
+     *
+     * @throws NoSuchAlgorithmException Caso a aplicação encontre problemas para criptografar senhas
+     */
     public static void login() throws NoSuchAlgorithmException {
         if (!isUserLogged) {
-            String[] outputHelper = OutputHelper.LOGIN_STEPS;
-
             try {
-                System.out.print(outputHelper[0]); // Usuário
+                System.out.print(INPUT_LOGIN_USERNAME);
                 String username = inputReader.nextLine();
-                System.out.print(outputHelper[1]); // Senha
+                System.out.print(INPUT_LOGIN_PASSWORD);
                 String plainPassword = inputReader.nextLine();
 
                 String registeredPassword = User.getUserPassword(username);
                 String cryptedPassword = new PasswordHelper("SHA-256", "UTF-8").generateHash(plainPassword);
                 if (Objects.equals(registeredPassword, cryptedPassword)) {
-                    System.out.println("=== USUARIO LOGADO COM SUCESSO ===");
+                    System.out.println(USER_LOGGED_IN_MESSAGE);
                     isUserLogged = true;
                     loggedUser = username;
                 } else {
-                    throw new RuntimeException("=== ERRO AO REALIZAR LOGIN. TENTE NOVAMENTE ===");
+                    throw new RuntimeException(LOGIN_ERROR_MESSAGE);
                 }
             } catch (RuntimeException | IOException e) {
                 System.out.println(e.getMessage().toUpperCase(Locale.ROOT));
             }
         } else {
-            System.out.println("=== SESSAO JA POSSUI USUARIO LOGADO ===");
+            System.out.println(SESSION_ALREADY_LOGGED_IN_MESSAGE);
         }
     }
 
+    /**
+     * Executa função de cadastrar um novo evento
+     */
+    public static void registerEvent() {
+        try {
+            userMustBeLogged();
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage().toUpperCase(Locale.ROOT));
+        }
+    }
+
+    /**
+     * Executa função de cadastrar um usuário em um evento existente
+     */
+    public static void applyToAnEvent() {
+        try {
+            userMustBeLogged();
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage().toUpperCase(Locale.ROOT));
+        }
+    }
+
+    /**
+     * Lista os eventos existentes
+     *
+     * @throws IOException Caso a aplicação encontre problemas para interagir com o arquivo de eventos
+     */
     public static void listEvents() throws IOException {
         try {
-            if (isUserLogged) {
-                Event.listExistingEvents();
-            } else {
-                throw new RuntimeException("=== FACA LOGIN PARA USAR ESSA FUNCAO ===");
-            }
+            userMustBeLogged();
+            Event.listExistingEvents();
         } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
+            System.out.println(e.getMessage().toUpperCase(Locale.ROOT));
         }
     }
 
+    /**
+     * Desloga um usuário logado, se aplicável
+     */
     public static void logout() {
-        isUserLogged = false;
-        loggedUser = null;
-        System.out.println(OutputHelper.LOGOUT_LINE);
+        if (isUserLogged) {
+            isUserLogged = false;
+            loggedUser = null;
+            System.out.println(LOGOUT_LINE);
+        } else {
+            System.out.println(SESSION_NOT_LOGGED_IN_MESSAGE);
+        }
     }
 }

@@ -12,6 +12,9 @@ import java.util.Objects;
  * @author gilson.junior.a1
  */
 public class User {
+    public static final String POSSIBLE_USER_GENDERS = "mfo";
+    public static final int MIN_USER_AGE = 18;
+    public static final int MAX_USER_AGE = 85;
     private static final int USER_NAME_POSITION_IN_FILE = 1;
     private static final int USER_DOCUMENT_POSITION_IN_FILE = 4;
     private static final int USER_PASSWORD_POSITION_IN_FILE = 5;

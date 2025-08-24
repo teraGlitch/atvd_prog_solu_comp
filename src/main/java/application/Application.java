@@ -27,11 +27,5 @@ public class Application {
             inputReader.nextLine();
             selectOption(userInput);
         } while (userInput != 0);
-
-//        Event event1 = new Event("Testing Event", "1st Testingroad", EventCategory.BUSINESS, LocalDateTime.now(), 1L, "This is a test");
-//        event1.registerEvent();
-//        event1.listExistingEvents();
-
-//        System.out.println(String.format("%s".replace("_", System.lineSeparator()), user1.describe()));
     }
 }
