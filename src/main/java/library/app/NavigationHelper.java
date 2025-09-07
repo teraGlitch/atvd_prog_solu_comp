@@ -1,17 +1,25 @@
 package library.app;
 
 import application.Application;
+import library.event.DataFileManager;
 import library.event.Event;
+import library.event.EventCategory;
 import library.user.PasswordHelper;
 import library.user.User;
 import library.user.UserFileManager;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
 import static library.app.OutputHelper.*;
+import static library.event.Event.POSSIBLE_EVENT_CATEGORIES;
 import static library.user.User.*;
 
 /**
@@ -158,10 +166,73 @@ public class NavigationHelper extends Application {
 
     /**
      * Executa função de cadastrar um novo evento
+     *
+     * @throws IOException Caso a aplicação encontre problemas para interagir com o arquivo de usuário
      */
-    public static void registerEvent() {
+    public static void registerEvent() throws IOException {
+        String[] eventData = new String[DataFileManager.DEFAULT_FILE_CONTENT.split(";").length - 1];
+
         try {
-            userMustBeLogged();
+            System.out.print(INPUT_EVENT_NAME_MESSAGE);
+            eventData[0] = inputReader.nextLine();
+
+            if (Objects.equals(eventData[0].trim(), "") || eventData[0].contains(";")) {
+                throw new RuntimeException(INVALID_EVENT_NAME_MESSAGE);
+            }
+
+            System.out.print(INPUT_EVENT_ADDRESS_MESSAGE);
+            eventData[1] = inputReader.nextLine();
+            if (Objects.equals(eventData[1].trim(), "") || eventData[1].contains(";")) {
+                throw new RuntimeException(INVALID_ADDRESS_MESSAGE);
+            }
+
+            System.out.print(INPUT_EVENT_CATEGORY_MESSAGE);
+            eventData[2] = inputReader.nextLine();
+
+            if (Arrays.stream(POSSIBLE_EVENT_CATEGORIES).noneMatch(x -> x.name().equalsIgnoreCase(eventData[2]))) {
+                throw new RuntimeException(INVALID_CATEGORY_MESSAGE);
+            }
+
+            System.out.print(INPUT_EVENT_START_DATE_TIME_MESSAGE);
+            eventData[3] = inputReader.nextLine();
+            LocalDateTime dateTime;
+            try {
+                LocalDate startDate = LocalDate.parse(eventData[3].substring(0, eventData[3].indexOf("T")));
+                LocalTime startTime = LocalTime.parse(eventData[3].substring(eventData[3].indexOf("T") + 1));
+                dateTime = LocalDateTime.of(startDate, startTime);
+
+                if (dateTime.isBefore(LocalDateTime.now())) {
+                    throw new RuntimeException(INVALID_DATE_MESSAGE);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(INVALID_DATE_MESSAGE);
+            }
+
+            System.out.print(INPUT_EVENT_DURATION_MESSAGE);
+            eventData[4] = inputReader.nextLine();
+
+            if (Long.parseLong(eventData[4].trim()) < 1L) {
+                throw new RuntimeException(INVALID_DURATION_MESSAGE);
+            }
+
+            System.out.print(INPUT_EVENT_DESCRIPTION_MESSAGE);
+            eventData[5] = inputReader.nextLine();
+
+            if (Objects.equals(eventData[5].trim(), "") || eventData[5].contains(";")) {
+                throw new RuntimeException(INVALID_DESCRIPTION_MESSAGE);
+            }
+
+            Event event = new Event( //
+                    eventData[0], //
+                    eventData[1], //
+                    EventCategory.valueOf(eventData[2].toUpperCase(Locale.ROOT)), //
+                    dateTime, //
+                    Long.parseLong(eventData[4]), //
+                    eventData[5]);
+            event.registerEvent();
+            Event.describe(event);
+
+            System.out.println(EVENT_REGISTERED_MESSAGE);
         } catch (RuntimeException e) {
             System.out.println(e.getMessage().toUpperCase(Locale.ROOT));
         }
@@ -181,15 +252,20 @@ public class NavigationHelper extends Application {
     /**
      * Lista os eventos existentes
      *
+     * @return Um objeto que representa a coleção de eventos em lista
      * @throws IOException Caso a aplicação encontre problemas para interagir com o arquivo de eventos
      */
-    public static void listEvents() throws IOException {
+    public static List<Event> listEvents() throws IOException {
+        List<Event> returnList = null;
+
         try {
             userMustBeLogged();
-            Event.listExistingEvents();
+            returnList = Event.listExistingEvents(true);
         } catch (RuntimeException e) {
             System.out.println(e.getMessage().toUpperCase(Locale.ROOT));
         }
+
+        return returnList;
     }
 
     /**

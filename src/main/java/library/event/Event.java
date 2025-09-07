@@ -8,7 +8,12 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
+
+import static application.Application.loggedUser;
 
 /**
  * Classe que descreve um evento
@@ -16,6 +21,7 @@ import java.util.List;
  * @author gilson.junior.a1
  */
 public class Event {
+    public static final EventCategory[] POSSIBLE_EVENT_CATEGORIES = EventCategory.values();
     private static final File eventStaticFile = new File(DataFileManager.DATA_FILENAME);
     private final File eventFile;
     public int id;
@@ -26,6 +32,7 @@ public class Event {
     public long durationInHours;
     public LocalDateTime endDateAndTime;
     public String description;
+    public boolean isUserAttending;
 
     /**
      * Construtor da classe
@@ -61,9 +68,10 @@ public class Event {
      * @param startDateAndTime Data e horário de início do evento
      * @param durationInHours  Duração do evento em horas inteiras
      * @param description      Descrição do evento
+     * @param attendees        Participantes do evento
      * @throws IOException Caso o programa encontre problemas para interagir com o arquivo de eventos
      */
-    public Event(int id, String name, String address, EventCategory category, LocalDateTime startDateAndTime, long durationInHours, String description) throws IOException {
+    public Event(int id, String name, String address, EventCategory category, LocalDateTime startDateAndTime, long durationInHours, String description, String attendees) throws IOException {
         DataFileManager.setUpOrCheckEventsFile();
         this.eventFile = new File(DataFileManager.DATA_FILENAME);
         this.id = id;
@@ -74,13 +82,15 @@ public class Event {
         this.durationInHours = durationInHours;
         this.endDateAndTime = this.startDateAndTime.plusHours(durationInHours);
         this.description = description;
+        this.isUserAttending = attendees.toLowerCase(Locale.ROOT).contains(loggedUser);
     }
 
-    public static void listExistingEvents() throws IOException {
-        List<String> eventsList = FileManager.readFile(eventStaticFile);
+    public static List<Event> listExistingEvents(boolean print) throws IOException {
+        List<String> eventsListString = FileManager.readFile(eventStaticFile);
+        List<Event> eventsListObj = new ArrayList<>();
 
-        for (int index = 1; index < eventsList.size(); index++) {
-            String[] eventData = eventsList.get(index).split(";");
+        for (int index = 1; index < eventsListString.size(); index++) {
+            String[] eventData = eventsListString.get(index).split(";");
             LocalDate startDate = LocalDate.parse(eventData[4].substring(0, eventData[4].indexOf("T")));
             LocalTime startTime = LocalTime.parse(eventData[4].substring(eventData[4].indexOf("T") + 1));
             Event event = new Event( //
@@ -90,9 +100,16 @@ public class Event {
                     EventCategory.valueOf(eventData[3]), //
                     LocalDateTime.of(startDate, startTime), //
                     Long.parseLong(eventData[5]), //
-                    eventData[7]);
-            describe(event);
+                    eventData[7], //
+                    eventData[8]);
+            eventsListObj.add(event);
         }
+
+        eventsListObj.sort(Comparator.comparing(Event::getEndDateAndTime));
+        if (print) {
+            eventsListObj.forEach(Event::describe);
+        }
+        return eventsListObj;
     }
 
     /* *********
@@ -104,7 +121,7 @@ public class Event {
      */
     public static void describe(Event event) {
         String result = String.format( //
-                "Evento de ID %d_\tNome\t\t: %s_\tEndereço\t: %s_\tCategoria\t: %s_\tInício\t\t: %s_\tFim\t\t\t: %s (%dh)_\tDescrição\t: %s_" //
+                "Evento de ID %d_\tNome\t\t: %s_\tEndereço\t: %s_\tCategoria\t: %s_\tInício\t\t: %s_\tFim\t\t\t: %s (%dh)_\tDescrição\t: %s_\tInscrição\t: %s_" //
                         .replace("_", System.lineSeparator()), //
                 event.getId(), //
                 event.getName(), //
@@ -113,7 +130,8 @@ public class Event {
                 event.getStartDateAndTime(), //
                 event.getEndDateAndTime(), //
                 event.getDurationInHours(), //
-                event.getDescription());
+                event.getDescription(), //
+                event.isUserAttending);
 
         System.out.println(result);
     }
@@ -169,7 +187,7 @@ public class Event {
     @Override
     public String toString() {
         // ID;NAME;ADDRESS;CATEGORY;START_DATE;DURATION;END_DATE;DESCRIPTION;
-        return String.format("%d;%s;%s;%s;%s;%d;%s;%s;", //
+        return String.format("%d;%s;%s;%s;%s;%d;%s;%s;_", //
                 getId(), //
                 getName(), //
                 getAddress(), //

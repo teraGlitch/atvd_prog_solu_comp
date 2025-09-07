@@ -9,15 +9,15 @@ public enum EventCategory {
     /**
      * Acadêmicos / Escolares (ex.: Feira de Ciências, Sarau)
      */
-    ACADEMIC, //
+    ACADEMICO, //
     /**
      * Corporativos (ex.: Feira de Emprego, Apresentação de Resultados)
      */
-    BUSINESS, //
+    CORPORATIVO, //
     /**
      * Entretenimento (ex.: Teatro, Show)
      */
-    ENTERTAINMENT, //
+    ENTRETENIMENTO, //
     /**
      * Esportes Eletrônicos (ex. Campeonatos em LAN, Masterclasses com Times Profissionais)
      */
@@ -25,5 +25,5 @@ public enum EventCategory {
     /**
      * Esportivos (ex.: Jogo de Futebol, Voleibol)
      */
-    SPORTS
+    ESPORTIVO
 }
