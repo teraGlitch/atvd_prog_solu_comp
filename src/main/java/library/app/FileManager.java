@@ -87,4 +87,14 @@ public class FileManager {
     public static int countLinesForIds(File file) {
         return readFile(file).size();
     }
+
+    /**
+     * Retorna se foi possível deletar um arquivo
+     *
+     * @param file Objeto que representa o arquivo que deve ser deletado
+     * @return Verdadeiro se foi possível deletar o arquivo; falso caso contrário
+     */
+    public static boolean deleteFile(final File file) {
+        return file.delete();
+    }
 }

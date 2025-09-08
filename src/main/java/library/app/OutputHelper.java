@@ -19,7 +19,8 @@ public interface OutputHelper {
                     "| 3 - CADASTRO DE NOVO EVENTO                |\n" + //
                     "| 4 - LISTAR EVENTOS                         |\n" + //
                     "| 5 - PARTICIPAR DE UM EVENTO                |\n" + //
-                    "| 6 - LOGOUT                                 |\n" + //
+                    "| 6 - APAGAR UM EVENTO                       |\n" + //
+                    "| 7 - LOGOUT                                 |\n" + //
                     "| 0 - ENCERRAR                               |\n" + //
                     "==============================================";
 
@@ -45,6 +46,9 @@ public interface OutputHelper {
     String INPUT_EVENT_DURATION_MESSAGE = "\tDIGITE A DURACAO DO EVENTO EM HORAS : (NUMERO INTEIRO > 1)\n\t> ";
     String INPUT_EVENT_DESCRIPTION_MESSAGE = "\tDIGITE A DESCRICAO DO EVENTO : (ALFANUMERICO)\n\t> ";
     String EVENT_REGISTERED_MESSAGE = "=== EVENTO CADASTRADO COM SUCESSO ===";
+    String INPUT_EVENT_ID_MESSAGE = "\tDIGITE O ID DO EVENTO DESEJADO : (NUMERO INTEIRO, ID DEVE EXISTIR)\n\t> ";
+    String PRESENCE_REGISTERED_MESSAGE = "=== PRESENCA CADASTRADA COM SUCESSO ===";
+    String EVENT_DELETED_MESSAGE = "=== EVENTO DELETADO COM SUCESSO ===";
 
     String END_LINE = //
             "==============================================\n" + //
@@ -73,4 +77,5 @@ public interface OutputHelper {
     String INVALID_DATE_MESSAGE = "=== DATA-HORA INICIO INVALIDA. TENTE NOVAMENTE ===";
     String INVALID_DURATION_MESSAGE = "=== DURACAO INVALIDA. TENTE NOVAMENTE ===";
     String INVALID_DESCRIPTION_MESSAGE = "=== DESCRICAO INVALIDA. TENTE NOVAMENTE ===";
+    String INVALID_EVENT_ID_MESSAGE = "=== ID INVALIDO. TENTE NOVAMENTE ===";
 }

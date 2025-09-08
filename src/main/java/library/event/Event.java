@@ -1,7 +1,6 @@
 package library.event;
 
 import library.app.FileManager;
-import library.user.UserFileManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +32,7 @@ public class Event {
     public LocalDateTime endDateAndTime;
     public String description;
     public boolean isUserAttending;
+    public String attendees;
 
     /**
      * Construtor da classe
@@ -82,6 +82,7 @@ public class Event {
         this.durationInHours = durationInHours;
         this.endDateAndTime = this.startDateAndTime.plusHours(durationInHours);
         this.description = description;
+        this.attendees = attendees;
         this.isUserAttending = attendees.toLowerCase(Locale.ROOT).contains(loggedUser);
     }
 
@@ -112,10 +113,6 @@ public class Event {
         return eventsListObj;
     }
 
-    /* *********
-     * GETTERS *
-     ********* */
-
     /**
      * Formata e exibe os detalhes de um evento
      */
@@ -135,6 +132,22 @@ public class Event {
 
         System.out.println(result);
     }
+
+    /**
+     * @throws IOException Caso o programa encontre problemas para interagir com o arquivo de eventos
+     */
+    public static void setEvents(List<Event> eventsList) throws IOException {
+        DataFileManager.deleteFile(new File(DataFileManager.DATA_FILENAME));
+        DataFileManager.setUpOrCheckEventsFile();
+
+        for (Event event : eventsList) {
+            DataFileManager.writeLineToFile(new File(DataFileManager.DATA_FILENAME), event.toString());
+        }
+    }
+
+    /* *********
+     * GETTERS *
+     ********* */
 
     public int getId() {
         return id;
@@ -168,6 +181,14 @@ public class Event {
         return description;
     }
 
+    public String getAttendees() {
+        return attendees;
+    }
+
+    public void setAttendee(String attendee) {
+        this.attendees = String.format("%s%s", this.attendees == null ? "" : this.attendees + ",", attendee);
+    }
+
     /**
      * Armazena os dados do evento instanciado no arquivo de eventos
      *
@@ -176,7 +197,7 @@ public class Event {
     public void registerEvent() throws IOException {
         DataFileManager.setUpOrCheckEventsFile();
 
-        UserFileManager.writeLineToFile(eventFile, this.toString());
+        DataFileManager.writeLineToFile(eventFile, this.toString());
     }
 
     /**
@@ -187,7 +208,7 @@ public class Event {
     @Override
     public String toString() {
         // ID;NAME;ADDRESS;CATEGORY;START_DATE;DURATION;END_DATE;DESCRIPTION;
-        return String.format("%d;%s;%s;%s;%s;%d;%s;%s;_", //
+        return String.format("%d;%s;%s;%s;%s;%d;%s;%s;%s", //
                 getId(), //
                 getName(), //
                 getAddress(), //
@@ -195,6 +216,7 @@ public class Event {
                 getStartDateAndTime(), //
                 getDurationInHours(), //
                 getEndDateAndTime(), //
-                getDescription());
+                getDescription(), //
+                getAttendees());
     }
 }

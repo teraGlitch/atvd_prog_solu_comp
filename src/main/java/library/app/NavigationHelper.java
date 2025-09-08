@@ -36,7 +36,7 @@ public class NavigationHelper extends Application {
      * @throws NoSuchAlgorithmException Caso a aplicação encontre problemas para criptografar senhas
      */
     public static void selectOption(final int userInput) throws IOException, NoSuchAlgorithmException {
-        if (userInput < 0 || userInput > 6) {
+        if (userInput < 0 || userInput > 7) {
             System.out.println(INVALID_OPTION_MESSAGE);
         } else {
             switch (userInput) {
@@ -50,12 +50,15 @@ public class NavigationHelper extends Application {
                     registerEvent();
                     break;
                 case 4:
-                    listEvents();
+                    listEvents(true);
                     break;
                 case 5:
                     applyToAnEvent();
                     break;
                 case 6:
+                    deleteAnEvent();
+                    break;
+                case 7:
                     logout();
                     break;
                 default:
@@ -239,33 +242,89 @@ public class NavigationHelper extends Application {
     }
 
     /**
-     * Executa função de cadastrar um usuário em um evento existente
-     */
-    public static void applyToAnEvent() {
-        try {
-            userMustBeLogged();
-        } catch (RuntimeException e) {
-            System.out.println(e.getMessage().toUpperCase(Locale.ROOT));
-        }
-    }
-
-    /**
      * Lista os eventos existentes
      *
+     * @param print Se verdadeiro, os resultados serão exibidos no console
      * @return Um objeto que representa a coleção de eventos em lista
      * @throws IOException Caso a aplicação encontre problemas para interagir com o arquivo de eventos
      */
-    public static List<Event> listEvents() throws IOException {
+    public static List<Event> listEvents(boolean print) throws IOException {
         List<Event> returnList = null;
 
         try {
             userMustBeLogged();
-            returnList = Event.listExistingEvents(true);
+            returnList = Event.listExistingEvents(print);
         } catch (RuntimeException e) {
             System.out.println(e.getMessage().toUpperCase(Locale.ROOT));
         }
 
         return returnList;
+    }
+
+    /**
+     * Executa função de cadastrar um usuário em um evento existente
+     */
+    public static void applyToAnEvent() {
+        try {
+            userMustBeLogged();
+
+            List<Event> eventsList = listEvents(false);
+
+            System.out.print(INPUT_EVENT_ID_MESSAGE);
+            int eventId = inputReader.nextInt();
+            inputReader.nextLine();
+
+            if (eventId < 1) {
+                throw new RuntimeException(INVALID_EVENT_ID_MESSAGE);
+            }
+
+            Event desiredEvent = eventsList.stream().filter(x -> Objects.equals(x.id, eventId)).findFirst().orElse(null);
+            eventsList.removeIf(x -> Objects.equals(x.id, eventId));
+
+            if (Objects.isNull(desiredEvent)) {
+                throw new RuntimeException(INVALID_EVENT_ID_MESSAGE);
+            }
+
+            desiredEvent.setAttendee(loggedUser);
+            eventsList.add(desiredEvent);
+
+            Event.setEvents(eventsList);
+            System.out.println(PRESENCE_REGISTERED_MESSAGE);
+        } catch (RuntimeException | IOException e) {
+            System.out.println(e.getMessage().toUpperCase(Locale.ROOT));
+        }
+    }
+
+    /**
+     * Executa função de deletar um evento existente
+     */
+    public static void deleteAnEvent() {
+        try {
+            userMustBeLogged();
+
+            List<Event> eventsList = listEvents(false);
+
+            System.out.print(INPUT_EVENT_ID_MESSAGE);
+            int eventId = inputReader.nextInt();
+            inputReader.nextLine();
+
+            if (eventId < 1) {
+                throw new RuntimeException(INVALID_EVENT_ID_MESSAGE);
+            }
+
+            Event desiredEvent = eventsList.stream().filter(x -> Objects.equals(x.id, eventId)).findFirst().orElse(null);
+
+            if (Objects.isNull(desiredEvent)) {
+                throw new RuntimeException(INVALID_EVENT_ID_MESSAGE);
+            }
+
+            eventsList.removeIf(x -> Objects.equals(x.id, eventId));
+
+            Event.setEvents(eventsList);
+            System.out.println(EVENT_DELETED_MESSAGE);
+        } catch (RuntimeException | IOException e) {
+            System.out.println(e.getMessage().toUpperCase(Locale.ROOT));
+        }
     }
 
     /**
