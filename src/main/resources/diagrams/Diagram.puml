@@ -1,0 +1,171 @@
+@startuml
+class library.app.FileManager {
++ {static} String FILE_PATH
++ {static} boolean fileExists(File)
++ {static} boolean createFile(File)
++ {static} List<String> readFile(File)
++ {static} void writeLineToFile(File,String)
++ {static} int countLinesForIds(File)
++ {static} boolean deleteFile(File)
+}
+
+
+enum library.event.EventCategory {
++  ACADEMICO
++  CORPORATIVO
++  ENTRETENIMENTO
++  E_SPORTS
++  ESPORTIVO
+}
+
+class library.user.User {
++ {static} String POSSIBLE_USER_GENDERS
++ {static} int MIN_USER_AGE
++ {static} int MAX_USER_AGE
+- {static} int USER_NAME_POSITION_IN_FILE
+- {static} int USER_DOCUMENT_POSITION_IN_FILE
+- {static} int USER_PASSWORD_POSITION_IN_FILE
+- File userFile
++ int id
++ String name
++ char gender
++ int age
++ String documentNumber
++ String password
++ {static} String getUserPassword(String)
++ int getId()
++ String getName()
++ char getGender()
++ int getAge()
++ String getDocumentNumber()
++ String getPassword()
++ String describe()
++ boolean checkIfUserDataExists(String,int)
++ void registerUser()
++ String toString()
+}
+
+
+class library.app.NavigationHelper {
++ {static} void selectOption(int)
++ {static} void registerUser()
++ {static} void userMustBeLogged()
++ {static} void login()
++ {static} void registerEvent()
++ {static} List<Event> listEvents(boolean)
++ {static} void applyToAnEvent()
++ {static} void deleteAnEvent()
++ {static} void logout()
+}
+
+class library.user.PasswordHelper {
+- String TEXT_ENCODING
+- MessageDigest hasher
++ String generateHash(String)
+}
+
+
+class application.Application {
++ {static} Scanner inputReader
++ {static} boolean isUserLogged
++ {static} String loggedUser
++ {static} void main(String[])
+}
+
+
+class library.user.UserFileManager {
++ {static} String USERS_FILENAME
++ {static} String DEFAULT_FILE_CONTENT
++ {static} void setUpOrCheckUsersFile()
++ {static} void main(String[])
+}
+
+
+interface library.app.OutputHelper {
+~ {static} String WELCOME_PAGE
+~ {static} String INPUT_USERNAME_MESSAGE
+~ {static} String INPUT_USER_PASSWORD_MESSAGE
+~ {static} String CONFIRM_USER_PASSWORD_MESSAGE
+~ {static} String INPUT_USER_GENDER_MESSAGE
+~ {static} String INPUT_USER_AGE_MESSAGE
+~ {static} String INPUT_USER_DOCUMENT_MESSAGE
+~ {static} String USER_REGISTERED_MESSAGE
+~ {static} String INPUT_LOGIN_USERNAME
+~ {static} String INPUT_LOGIN_PASSWORD
+~ {static} String USER_LOGGED_IN_MESSAGE
+~ {static} String SESSION_ALREADY_LOGGED_IN_MESSAGE
+~ {static} String SESSION_NOT_LOGGED_IN_MESSAGE
+~ {static} String LOG_IN_TO_CONTINUE_MESSAGE
+~ {static} String INPUT_EVENT_NAME_MESSAGE
+~ {static} String INPUT_EVENT_ADDRESS_MESSAGE
+~ {static} String INPUT_EVENT_CATEGORY_MESSAGE
+~ {static} String INPUT_EVENT_START_DATE_TIME_MESSAGE
+~ {static} String INPUT_EVENT_DURATION_MESSAGE
+~ {static} String INPUT_EVENT_DESCRIPTION_MESSAGE
+~ {static} String EVENT_REGISTERED_MESSAGE
+~ {static} String INPUT_EVENT_ID_MESSAGE
+~ {static} String PRESENCE_REGISTERED_MESSAGE
+~ {static} String EVENT_DELETED_MESSAGE
+~ {static} String END_LINE
+~ {static} String LOGOUT_LINE
+~ {static} String INVALID_OPTION_MESSAGE
+~ {static} String INVALID_USERNAME_MESSAGE
+~ {static} String INVALID_GENDER_MESSAGE
+~ {static} String INVALID_AGE_MESSAGE
+~ {static} String INVALID_DOCUMENT_MESSAGE
+~ {static} String INVALID_PASSWORD_MESSAGE
+~ {static} String LOGIN_ERROR_MESSAGE
+~ {static} String INVALID_EVENT_NAME_MESSAGE
+~ {static} String INVALID_ADDRESS_MESSAGE
+~ {static} String INVALID_CATEGORY_MESSAGE
+~ {static} String INVALID_DATE_MESSAGE
+~ {static} String INVALID_DURATION_MESSAGE
+~ {static} String INVALID_DESCRIPTION_MESSAGE
+~ {static} String INVALID_EVENT_ID_MESSAGE
+}
+
+class library.event.Event {
++ {static} EventCategory[] POSSIBLE_EVENT_CATEGORIES
+- {static} File eventStaticFile
+- File eventFile
++ int id
++ String name
++ String address
++ EventCategory category
++ LocalDateTime startDateAndTime
++ long durationInHours
++ LocalDateTime endDateAndTime
++ String description
++ boolean isUserAttending
++ String attendees
++ {static} List<Event> listExistingEvents(boolean)
++ {static} void describe(Event)
++ {static} void setEvents(List<Event>)
++ int getId()
++ String getName()
++ String getAddress()
++ EventCategory getCategory()
++ LocalDateTime getStartDateAndTime()
++ long getDurationInHours()
++ LocalDateTime getEndDateAndTime()
++ String getDescription()
++ String getAttendees()
++ void setAttendee(String)
++ void registerEvent()
++ String toString()
+}
+
+
+class library.event.DataFileManager {
++ {static} String DATA_FILENAME
++ {static} String DEFAULT_FILE_CONTENT
++ {static} void setUpOrCheckEventsFile()
+}
+
+
+
+
+application.Application <|-- library.app.NavigationHelper
+library.app.FileManager <|-- library.user.UserFileManager
+library.app.FileManager <|-- library.event.DataFileManager
+@enduml
