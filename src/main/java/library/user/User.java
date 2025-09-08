@@ -9,7 +9,7 @@ import java.util.Objects;
 /**
  * Classe que descreve um usuário
  *
- * @author gilson.junior.a1
+ * @author GILSON JUNIOR 2025206104
  */
 public class User {
     public static final String POSSIBLE_USER_GENDERS = "mfo";

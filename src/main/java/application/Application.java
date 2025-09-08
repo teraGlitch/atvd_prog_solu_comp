@@ -11,7 +11,7 @@ import static library.app.NavigationHelper.selectOption;
 /**
  * Descreve a classe principal do programa
  *
- * @author gilson.junior.a1
+ * author gilson.junior.a1
  */
 public class Application {
     public static Scanner inputReader = new Scanner(System.in);

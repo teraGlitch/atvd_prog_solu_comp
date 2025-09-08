@@ -17,7 +17,7 @@ import static application.Application.loggedUser;
 /**
  * Classe que descreve um evento
  *
- * @author gilson.junior.a1
+ * @author GILSON JUNIOR 2025206104
  */
 public class Event {
     public static final EventCategory[] POSSIBLE_EVENT_CATEGORIES = EventCategory.values();

@@ -10,7 +10,7 @@ import java.util.Objects;
 /**
  * Contém os objetos necessários para trabalhar com o arquivo de usuários
  *
- * @author gilson.junior.a1
+ * @author GILSON JUNIOR 2025206104
  */
 public class UserFileManager extends FileManager {
     // Atributos da classe

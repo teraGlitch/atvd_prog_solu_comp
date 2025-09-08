@@ -25,7 +25,7 @@ import static library.user.User.*;
 /**
  * Descreve o comportamento ao navegar pelo menu
  *
- * @author gilson.junior.a1
+ * @author GILSON JUNIOR 2025206104
  */
 public class NavigationHelper extends Application {
     /**

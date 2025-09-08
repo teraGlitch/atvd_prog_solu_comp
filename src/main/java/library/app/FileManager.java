@@ -9,7 +9,7 @@ import java.util.Objects;
 /**
  * Contém os objetos necessários para trabalhar com arquivos em geral
  *
- * @author gilson.junior.a1
+ * @author GILSON JUNIOR 2025206104
  */
 public class FileManager {
     // Atributos da classe
